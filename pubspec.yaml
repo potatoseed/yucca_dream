@@ -68,3 +68,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages
+  fonts:
+    - family: Mali
+      fonts:
+        - asset: fonts/Mali-Regular.ttf
+    - family: Questrial
+      fonts:
+        - asset: fonts/Questrial-Regular.ttf

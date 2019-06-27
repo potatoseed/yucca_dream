@@ -1,4 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+
+const cardColor = Color(0xFF938881);
+const buttonTextColor = Colors.white;
+// This height will allow for all the Card's content to fit comfortably within the card.
+const double cardHeight = 258.0;
+const ShapeBorder shapeBroader = RoundedRectangleBorder(
+  borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(8.0),
+    topRight: Radius.circular(8.0),
+    bottomLeft: Radius.circular(8.0),
+    bottomRight: Radius.circular(8.0),
+  ),
+);
+
+//const ShapeBorder shapeBroader = CircleBorder(side: BorderSide.none);
 
 void main() => runApp(MyApp());
 
@@ -7,17 +23,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Yucca Dream',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Yucca Dream'),
@@ -44,19 +51,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -70,43 +64,268 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-        backgroundColor: Colors.blueGrey[900],
+        backgroundColor: Colors.blueGrey[700],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: Colors.grey,
+      body: Scrollbar(
+        child: ListView(
+          padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+          children: MainFeatureList.map<Widget>((MainFeature mainFeature) {
+            Widget child;
+            child = MainFeatureItem(
+              mainFeature: mainFeature,
+              shape: shapeBroader,
+            );
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8.0),
+              child: child,
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class MainFeature {
+  const MainFeature({
+    @required this.assetName,
+    @required this.inkText,
+    @required this.featureName,
+    @required this.buttonName,
+  })  : assert(assetName != null),
+        assert(featureName != null),
+        assert(inkText != null);
+
+  final String assetName;
+  final String inkText;
+  final String featureName;
+  final String buttonName;
+}
+
+const List<MainFeature> MainFeatureList = <MainFeature>[
+  MainFeature(
+      assetName: 'images/build_dream_1.jpg',
+      inkText: 'Test ink text',
+      featureName: 'BUILD YOUR DREAM',
+      buttonName: 'BUILD YOUR DREAM'),
+  MainFeature(
+      assetName: 'images/goto_dream1.jpg',
+      inkText: 'Test ink text',
+      featureName: 'Go To Your Dream',
+      buttonName: 'GO TO YOUR DREAM'),
+];
+
+class MainFeatureContent extends StatelessWidget {
+  const MainFeatureContent({Key key, @required this.mainFeature})
+      : assert(mainFeature != null),
+        super(key: key);
+
+  final MainFeature mainFeature;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextStyle titleStyle =
+        theme.textTheme.headline.copyWith(color: Colors.white);
+    final TextStyle descriptionStyle = theme.textTheme.subhead;
+
+    final List<Widget> children = <Widget>[
+      // Photo and title.
+      SizedBox(
+        height: 184.0,
+        child: Stack(
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            Positioned.fill(
+              // In order to have the ink splash appear above the image, you
+              // must use Ink.image. This allows the image to be painted as part
+              // of the Material and display ink effects above it. Using a
+              // standard Image will obscure the ink splash.
+              child: Ink.image(
+                image: AssetImage(mainFeature.assetName),
+                fit: BoxFit.cover,
+                child: Container(),
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+            Positioned(
+              bottom: 16.0,
+              left: 16.0,
+              right: 16.0,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  mainFeature.inkText,
+                  style: titleStyle,
+                ),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // Description and buttons.
+//      Padding(
+//        padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+//        child: DefaultTextStyle(
+//          softWrap: false,
+//          overflow: TextOverflow.ellipsis,
+//          style: descriptionStyle,
+//          child: Column(
+//            crossAxisAlignment: CrossAxisAlignment.start,
+//            children: <Widget>[
+//              // can add more line text
+//              Padding(
+//                padding: const EdgeInsets.only(bottom: 8.0),
+//                child: Text(
+//                  mainFeature.featureName,
+//                  style: descriptionStyle.copyWith(color: Colors.black54),
+//                ),
+//              ),
+//            ],
+//          ),
+//        ),
+//      ),
+    ];
+
+    children.add(
+      // buttons
+      ButtonTheme.bar(
+        child: ButtonBar(
+          alignment: MainAxisAlignment.start,
+          children: <Widget>[
+            FlatButton(
+              child: Text(
+                mainFeature.buttonName,
+                semanticsLabel: 'Share ${mainFeature.inkText}',
+                style: TextStyle(fontSize: 20.0, fontFamily: 'Questrial'),
+              ),
+//              textColor: Colors.amber.shade500,
+              textColor: buttonTextColor,
+              onPressed: () {
+                print('pressed');
+              },
+            ),
+//            FlatButton(
+//              child: Text('EXPLORE',
+//                  semanticsLabel: 'Explore ${mainFeature.inkText}'),
+//              textColor: Colors.amber.shade500,
+//              onPressed: () {
+//                print('pressed');
+//              },
+//            ),
+          ],
+        ),
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children,
     );
   }
 }
+
+class MainFeatureItem extends StatelessWidget {
+  MainFeatureItem({Key key, @required this.mainFeature, this.shape})
+      : assert(mainFeature != null),
+        super(key: key);
+
+  final MainFeature mainFeature;
+  final ShapeBorder shape;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: cardHeight,
+              child: Card(
+                color: cardColor,
+                // This ensures that the Card's children are clipped correctly.
+                clipBehavior: Clip.antiAlias,
+                shape: shape,
+                child: MainFeatureContent(mainFeature: mainFeature),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//child: Column(
+//mainAxisAlignment: MainAxisAlignment.center,
+//children: <Widget>[
+//Expanded(
+//child: Container(
+//margin: EdgeInsets.fromLTRB(16, 16, 16, 8),
+//child: CircleAvatar(
+//maxRadius: double.infinity,
+//minRadius: 100.0,
+//backgroundImage: AssetImage('images/build_dream_1.jpg'),
+//),
+//),
+//),
+//Container(
+//margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
+//child: Row(
+//children: <Widget>[
+//Icon(
+//Icons.redeem,
+//size: 24,
+//color: Colors.teal,
+//),
+//SizedBox(
+//width: 16,
+//),
+//Text(
+//'Build your Dream',
+//style: TextStyle(
+//fontFamily: 'Questrial',
+//fontSize: 24.0,
+//color: Colors.white),
+//),
+//],
+//),
+//),
+//SizedBox(
+//height: 16,
+//),
+//Expanded(
+//child: Card(
+//elevation: 8,
+//margin: EdgeInsets.all(16),
+//child: Image(
+//image: AssetImage('images/goto_dream1.jpg'),
+//),
+//),
+//),
+//ListTile(
+//leading: Icon(
+//Icons.forward,
+//size: 24,
+//color: Colors.teal,
+//),
+//title: Text(
+//'Go To Your Dream',
+//style: TextStyle(
+//fontFamily: 'Questrial',
+//fontSize: 24.0,
+//color: Colors.white),
+//),
+//),
+//Text(
+//'You have pushed the button this many times:',
+//),
+//Text(
+//'$_counter',
+//style: Theme.of(context).textTheme.display1,
+//),
+//],
